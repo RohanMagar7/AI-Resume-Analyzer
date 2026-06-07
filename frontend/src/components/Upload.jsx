@@ -96,12 +96,12 @@ function Upload() {
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
           >
-            <div className="upload-icon">📄</div>
+            <span className="upload-icon">📄</span>
             <div className="upload-text">
               Drag & drop your resume here
             </div>
             <div className="upload-hint">
-              or click to browse - Supports PDF and DOCX (max 10MB)
+              or click to browse — Supports PDF and DOCX (max 10MB)
             </div>
             <input
               ref={fileInputRef}
@@ -115,23 +115,32 @@ function Upload() {
           <div style={{ textAlign: 'center' }}>
             {/* File Info */}
             <div style={{
-              background: 'var(--gray-50)',
-              borderRadius: 'var(--radius)',
-              padding: '24px',
-              marginBottom: '20px',
+              background: 'var(--bg-secondary)',
+              borderRadius: 'var(--radius-lg)',
+              padding: '28px',
+              marginBottom: '24px',
+              border: '1px solid var(--border-color)',
             }}>
-              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>
                 {file.name.endsWith('.pdf') ? '📕' : '📘'}
               </div>
-              <div style={{ fontWeight: 600, marginBottom: '4px' }}>
+              <div style={{
+                fontWeight: 600,
+                marginBottom: '6px',
+                color: 'var(--text-primary)',
+                fontSize: '1rem',
+              }}>
                 {file.name}
               </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--gray-400)' }}>
+              <div style={{
+                fontSize: '0.85rem',
+                color: 'var(--text-muted)',
+                marginBottom: '16px',
+              }}>
                 {formatFileSize(file.size)}
               </div>
               <button
                 className="btn btn-secondary btn-sm"
-                style={{ marginTop: '12px' }}
                 onClick={() => setFile(null)}
               >
                 Choose Different File
@@ -139,13 +148,13 @@ function Upload() {
             </div>
 
             {/* Target Role (optional) */}
-            <div style={{ marginBottom: '20px', textAlign: 'left' }}>
+            <div style={{ marginBottom: '24px', textAlign: 'left' }}>
               <label style={{
                 display: 'block',
                 fontSize: '0.9rem',
                 fontWeight: 600,
                 marginBottom: '8px',
-                color: 'var(--gray-700)',
+                color: 'var(--text-secondary)',
               }}>
                 Target Job Role (optional)
               </label>
@@ -156,15 +165,17 @@ function Upload() {
                 onChange={(e) => setTargetRole(e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '10px 16px',
-                  borderRadius: '8px',
-                  border: '1px solid var(--gray-200)',
+                  padding: '12px 16px',
+                  borderRadius: 'var(--radius)',
+                  border: '1px solid var(--border-color)',
                   fontSize: '0.9rem',
                   outline: 'none',
-                  transition: 'border-color 0.2s',
+                  background: 'var(--bg-secondary)',
+                  color: 'var(--text-primary)',
+                  transition: 'var(--transition)',
                 }}
-                onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                onBlur={(e) => e.target.style.borderColor = 'var(--gray-200)'}
+                onFocus={(e) => e.target.style.borderColor = 'var(--accent-1)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
               />
             </div>
 
@@ -173,7 +184,7 @@ function Upload() {
               className="btn btn-primary"
               onClick={handleUpload}
               disabled={uploading}
-              style={{ width: '100%' }}
+              style={{ width: '100%', padding: '14px 24px', fontSize: '1rem' }}
             >
               {uploading ? (
                 <>
@@ -181,7 +192,7 @@ function Upload() {
                     width: 20, height: 20,
                     borderWidth: 2,
                     borderTopColor: 'white',
-                    borderColor: 'rgba(255,255,255,0.3)',
+                    borderColor: 'rgba(255,255,255,0.2)',
                   }}></div>
                   Analyzing Resume...
                 </>
@@ -196,24 +207,26 @@ function Upload() {
 
         {/* Supported Formats Info */}
         <div style={{
-          marginTop: '20px',
-          padding: '16px',
-          background: 'var(--gray-50)',
-          borderRadius: '8px',
+          marginTop: '24px',
+          padding: '20px',
+          background: 'var(--bg-secondary)',
+          borderRadius: 'var(--radius)',
           fontSize: '0.85rem',
-          color: 'var(--gray-500)',
+          color: 'var(--text-muted)',
+          border: '1px solid var(--border-color)',
         }}>
-          <strong style={{ color: 'var(--gray-700)' }}>Supported Formats:</strong>
-          <div style={{ marginTop: '4px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <strong style={{ color: 'var(--text-secondary)' }}>Supported Formats:</strong>
+          <div style={{ marginTop: '8px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <span className="tag tag-primary">📕 PDF</span>
             <span className="tag tag-primary">📘 DOCX</span>
           </div>
-          <div style={{ marginTop: '8px' }}>
-            <strong style={{ color: 'var(--gray-700)' }}>Analysis Includes:</strong>
+          <div style={{ marginTop: '12px' }}>
+            <strong style={{ color: 'var(--text-secondary)' }}>Analysis Includes:</strong>
             <ul style={{
-              marginTop: '4px',
+              marginTop: '6px',
               paddingLeft: '20px',
-              lineHeight: '1.8',
+              lineHeight: '2',
+              color: 'var(--text-muted)',
             }}>
               <li>Resume parsing & text extraction</li>
               <li>NLP-based skill identification</li>

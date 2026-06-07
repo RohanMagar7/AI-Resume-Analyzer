@@ -6,7 +6,10 @@ function ScoreGauge({ score, label }) {
   const radius = 80;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
-  const color = score >= 80 ? '#10b981' : score >= 60 ? '#4f46e5' : score >= 40 ? '#f59e0b' : '#ef4444';
+  const colors = {
+    stroke: score >= 80 ? '#00b894' : score >= 60 ? '#6c5ce7' : score >= 40 ? '#fdcb6e' : '#e17055',
+    glow: score >= 80 ? 'rgba(0,184,148,0.3)' : score >= 60 ? 'rgba(108,92,231,0.3)' : score >= 40 ? 'rgba(253,203,110,0.3)' : 'rgba(225,112,85,0.3)',
+  };
 
   return (
     <div className="score-gauge">
@@ -17,13 +20,18 @@ function ScoreGauge({ score, label }) {
           cx="90"
           cy="90"
           r={radius}
-          stroke={color}
+          stroke={colors.stroke}
           strokeDasharray={circumference}
           strokeDashoffset={offset}
+          style={{ filter: `drop-shadow(0 0 8px ${colors.glow})` }}
         />
       </svg>
       <div className="score-value">
-        <div className="number">{score.toFixed(0)}</div>
+        <div className="number" style={{
+          background: `linear-gradient(135deg, ${colors.stroke}, ${colors.stroke}cc)`,
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+        }}>{score.toFixed(0)}</div>
         <div className="label">{label}</div>
       </div>
     </div>
@@ -49,9 +57,9 @@ function ScoreBar({ label, value, max = 100 }) {
 
 function SuggestionCard({ suggestion }) {
   const priorityColors = {
-    high: { bg: '#fef2f2', border: '#fecaca', text: '#991b1b', dot: '#ef4444' },
-    medium: { bg: '#fffbeb', border: '#fde68a', text: '#92400e', dot: '#f59e0b' },
-    low: { bg: '#f0fdf4', border: '#bbf7d0', text: '#166534', dot: '#22c55e' },
+    high: { bg: 'rgba(225, 112, 85, 0.1)', border: '#e17055', text: '#e17055', dot: '#e17055' },
+    medium: { bg: 'rgba(253, 203, 110, 0.1)', border: '#fdcb6e', text: '#fdcb6e', dot: '#fdcb6e' },
+    low: { bg: 'rgba(0, 184, 148, 0.1)', border: '#00b894', text: '#00b894', dot: '#00b894' },
   };
   const colors = priorityColors[suggestion.priority] || priorityColors.medium;
 
@@ -59,28 +67,28 @@ function SuggestionCard({ suggestion }) {
     <div className="suggestion-card" style={{
       background: colors.bg,
       borderLeft: `4px solid ${colors.border}`,
-      borderRadius: '8px',
-      padding: '14px 16px',
+      borderRadius: 'var(--radius)',
+      padding: '16px 20px',
       marginBottom: '12px',
     }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
         <span style={{ fontSize: '1.3rem', flexShrink: 0 }}>{suggestion.icon || '💡'}</span>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
             <span style={{
-              fontWeight: 600, fontSize: '0.95rem', color: 'var(--gray-800)',
+              fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-primary)',
             }}>{suggestion.title}</span>
             <span className="tag" style={{
               fontSize: '0.7rem',
               background: colors.dot,
               color: '#fff',
-              padding: '1px 8px',
+              padding: '1px 10px',
               borderRadius: '10px',
               fontWeight: 500,
               textTransform: 'capitalize',
             }}>{suggestion.priority}</span>
           </div>
-          <p style={{ fontSize: '0.85rem', color: 'var(--gray-600)', lineHeight: 1.5, margin: 0 }}>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
             {suggestion.recommendation}
           </p>
         </div>
@@ -140,7 +148,7 @@ function Results() {
       <div className="fade-in">
         <div className="alert alert-error">{error}</div>
         <button className="btn btn-primary" onClick={() => navigate('/resumes')}>
-          Back to Resume List
+          ← Back to Resume List
         </button>
       </div>
     );
@@ -162,8 +170,8 @@ function Results() {
       {showDelete && (
         <div className="modal-backdrop" onClick={() => setShowDelete(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3 style={{ marginBottom: '12px' }}>Delete Resume Analysis</h3>
-            <p style={{ color: 'var(--gray-500)', marginBottom: '20px' }}>
+            <h3 style={{ marginBottom: '12px', color: 'var(--text-primary)' }}>Delete Resume Analysis</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>
               Are you sure you want to delete the analysis for "{resume.original_filename}"? This action cannot be undone.
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
@@ -182,7 +190,7 @@ function Results() {
       <div className="page-header">
         <div>
           <h1>{resume.candidate_name || 'Resume Analysis'}</h1>
-          <p>{resume.original_filename}</p>
+          <p style={{ color: 'var(--text-muted)' }}>{resume.original_filename}</p>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           <button className="btn btn-secondary" onClick={() => navigate('/resumes')}>
@@ -196,13 +204,13 @@ function Results() {
 
       {/* Improvement Suggestions Section */}
       {suggestions.length > 0 && (
-        <div className="card suggestion-section" style={{ marginBottom: '24px', border: '2px solid #fde68a' }}>
+        <div className="card suggestion-section" style={{ marginBottom: '24px' }}>
           <div className="card-header">
             <h3 className="card-title">
               <span style={{ marginRight: '8px' }}>💡</span>
               Improvement Suggestions ({suggestions.length})
             </h3>
-            <span style={{ fontSize: '0.8rem', color: 'var(--gray-400)' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               Actionable tips to improve your resume
             </span>
           </div>
@@ -261,21 +269,21 @@ function Results() {
           {/* Main Overview Grid */}
           <div className="grid-2" style={{ marginBottom: '24px' }}>
             <div className="card" style={{ textAlign: 'center' }}>
-              <div className="card-header">
-                <h3 className="card-title">ATS Score</h3>
+              <div className="card-header" style={{ justifyContent: 'center' }}>
+                <h3 className="card-title">🎯 ATS Score</h3>
               </div>
               <ScoreGauge score={atsScore} label="Overall Score" />
-              <div style={{ marginTop: '16px', fontSize: '0.85rem', color: 'var(--gray-500)' }}>
-                {atsScore >= 80 ? '🌟 Excellent - Well optimized for ATS' :
-                 atsScore >= 60 ? '👍 Good - Minor improvements recommended' :
-                 atsScore >= 40 ? '⚠️ Average - Needs improvements' :
-                 '❌ Poor - Significant changes needed'}
+              <div style={{ marginTop: '16px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                {atsScore >= 80 ? '🌟 Excellent — Well optimized for ATS' :
+                 atsScore >= 60 ? '👍 Good — Minor improvements recommended' :
+                 atsScore >= 40 ? '⚠️ Average — Needs improvements' :
+                 '❌ Poor — Significant changes needed'}
               </div>
             </div>
 
             <div className="card">
               <div className="card-header">
-                <h3 className="card-title">Score Breakdown</h3>
+                <h3 className="card-title">📊 Score Breakdown</h3>
               </div>
               <ScoreBar label="Format Score" value={resume.format_score || 0} />
               <ScoreBar label="Keyword Score" value={resume.keyword_score || 0} />
@@ -287,24 +295,24 @@ function Results() {
 
           <div className="card" style={{ marginBottom: '24px' }}>
             <div className="card-header">
-              <h3 className="card-title">Candidate Information</h3>
+              <h3 className="card-title">👤 Candidate Information</h3>
             </div>
             <div className="grid-2">
               <div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--gray-400)', marginBottom: '2px' }}>Name</div>
-                <div style={{ fontWeight: 500 }}>{resume.candidate_name || 'Not detected'}</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '2px' }}>Name</div>
+                <div style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{resume.candidate_name || 'Not detected'}</div>
               </div>
               <div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--gray-400)', marginBottom: '2px' }}>Email</div>
-                <div style={{ fontWeight: 500 }}>{resume.email || 'Not detected'}</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '2px' }}>Email</div>
+                <div style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{resume.email || 'Not detected'}</div>
               </div>
               <div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--gray-400)', marginBottom: '2px' }}>Phone</div>
-                <div style={{ fontWeight: 500 }}>{resume.phone || 'Not detected'}</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '2px' }}>Phone</div>
+                <div style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{resume.phone || 'Not detected'}</div>
               </div>
               <div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--gray-400)', marginBottom: '2px' }}>Experience</div>
-                <div style={{ fontWeight: 500 }}>{resume.experience_years || 0} years</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '2px' }}>Experience</div>
+                <div style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{resume.experience_years || 0} years</div>
               </div>
             </div>
           </div>
@@ -312,7 +320,7 @@ function Results() {
           {matchScores.length > 0 && (
             <div className="card" style={{ marginBottom: '24px' }}>
               <div className="card-header">
-                <h3 className="card-title">Job Role Matching</h3>
+                <h3 className="card-title">🎯 Job Role Matching</h3>
               </div>
               <div className="table-container">
                 <table>
@@ -328,7 +336,7 @@ function Results() {
                   <tbody>
                     {matchScores.map((match, i) => (
                       <tr key={i}>
-                        <td style={{ fontWeight: 500 }}>{match.role}</td>
+                        <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{match.role}</td>
                         <td>
                           <span className={`tag ${
                             match.score >= 70 ? 'tag-success' :
@@ -348,7 +356,7 @@ function Results() {
                             <span key={s} className="tag tag-gray" style={{ fontSize: '0.75rem' }}>{s}</span>
                           ))}
                         </td>
-                        <td>{match.experience_gap || 0}</td>
+                        <td style={{ color: 'var(--text-secondary)' }}>{match.experience_gap || 0}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -360,7 +368,7 @@ function Results() {
           {resume.suggested_roles?.length > 0 && (
             <div className="card" style={{ marginBottom: '24px' }}>
               <div className="card-header">
-                <h3 className="card-title">Top Suggested Roles</h3>
+                <h3 className="card-title">⭐ Top Suggested Roles</h3>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {resume.suggested_roles.map((role, i) => (
@@ -381,7 +389,7 @@ function Results() {
               <span style={{ marginRight: '8px' }}>🛠️</span>
               Extracted Skills ({skills.length})
             </h3>
-            <span style={{ fontSize: '0.8rem', color: 'var(--gray-400)' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               Skills and technologies detected in the resume
             </span>
           </div>
@@ -391,9 +399,9 @@ function Results() {
                 {skill}
               </span>
             )) : (
-              <div style={{ textAlign: 'center', padding: '40px 20px', width: '100%', color: 'var(--gray-400)' }}>
+              <div style={{ textAlign: 'center', padding: '40px 20px', width: '100%', color: 'var(--text-muted)' }}>
                 <div style={{ fontSize: '3rem', marginBottom: '12px' }}>🛠️</div>
-                <p style={{ fontWeight: 500, margin: '0 0 6px 0' }}>No Skills Detected</p>
+                <p style={{ fontWeight: 500, margin: '0 0 6px 0', color: 'var(--text-secondary)' }}>No Skills Detected</p>
                 <p style={{ fontSize: '0.85rem', margin: 0 }}>
                   No skills were extracted from this resume. Consider adding a dedicated skills section.
                 </p>
@@ -410,7 +418,7 @@ function Results() {
               <span style={{ marginRight: '8px' }}>💼</span>
               Work Experience {experienceList.length > 0 && `(${experienceList.length})`}
             </h3>
-            <span style={{ fontSize: '0.8rem', color: 'var(--gray-400)' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               Professional experience entries extracted from resume
             </span>
           </div>
@@ -420,29 +428,30 @@ function Results() {
               {experienceList.map((exp, i) => (
                 <div key={i} style={{
                   padding: '16px',
-                  borderBottom: i < experienceList.length - 1 ? '1px solid var(--gray-100)' : 'none',
-                  transition: 'background 0.2s',
+                  borderBottom: i < experienceList.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                  transition: 'var(--transition)',
+                  borderRadius: i === experienceList.length - 1 ? '0 0 var(--radius) var(--radius)' : '0',
                 }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'var(--gray-50)'}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
-                    <div style={{ fontWeight: 600, color: 'var(--gray-800)', fontSize: '0.95rem' }}>
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.95rem' }}>
                       {exp.title || 'Position'}
                     </div>
                     {exp.dates && (
-                      <span style={{ fontSize: '0.8rem', color: 'var(--gray-400)', whiteSpace: 'nowrap', marginLeft: '12px' }}>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', marginLeft: '12px' }}>
                         📅 {exp.dates}
                       </span>
                     )}
                   </div>
                   {exp.company && (
-                    <div style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '4px' }}>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
                       🏢 {exp.company}
                     </div>
                   )}
                   {exp.description && (
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-600)', lineHeight: 1.5, margin: '8px 0 0 0' }}>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: '8px 0 0 0' }}>
                       {exp.description}
                     </p>
                   )}
@@ -450,9 +459,9 @@ function Results() {
               ))}
             </div>
           ) : (
-            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--gray-400)' }}>
+            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
               <div style={{ fontSize: '3rem', marginBottom: '12px' }}>💼</div>
-              <p style={{ fontWeight: 500, margin: '0 0 6px 0' }}>No Work Experience Detected</p>
+              <p style={{ fontWeight: 500, margin: '0 0 6px 0', color: 'var(--text-secondary)' }}>No Work Experience Detected</p>
               <p style={{ fontSize: '0.85rem', margin: 0 }}>
                 No experience entries were found. Adding detailed work experience can improve your ATS score.
               </p>
@@ -468,7 +477,7 @@ function Results() {
               <span style={{ marginRight: '8px' }}>🎓</span>
               Education {education.length > 0 && `(${education.length})`}
             </h3>
-            <span style={{ fontSize: '0.8rem', color: 'var(--gray-400)' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               Educational qualifications extracted from resume
             </span>
           </div>
@@ -478,22 +487,22 @@ function Results() {
               {education.map((edu, i) => (
                 <div key={i} style={{
                   padding: '16px',
-                  borderBottom: i < education.length - 1 ? '1px solid var(--gray-100)' : 'none',
-                  transition: 'background 0.2s',
+                  borderBottom: i < education.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                  transition: 'var(--transition)',
                 }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'var(--gray-50)'}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
-                  <div style={{ fontWeight: 600, color: 'var(--gray-800)', fontSize: '0.95rem', marginBottom: '4px' }}>
+                  <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.95rem', marginBottom: '4px' }}>
                     {edu.degree}
                   </div>
                   {edu.institution && (
-                    <div style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '2px' }}>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '2px' }}>
                       🏛️ {edu.institution}
                     </div>
                   )}
                   {edu.year && (
-                    <div style={{ fontSize: '0.8rem', color: 'var(--gray-400)' }}>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                       📅 {edu.year}
                     </div>
                   )}
@@ -501,9 +510,9 @@ function Results() {
               ))}
             </div>
           ) : (
-            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--gray-400)' }}>
+            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
               <div style={{ fontSize: '3rem', marginBottom: '12px' }}>🎓</div>
-              <p style={{ fontWeight: 500, margin: '0 0 6px 0' }}>No Education Detected</p>
+              <p style={{ fontWeight: 500, margin: '0 0 6px 0', color: 'var(--text-secondary)' }}>No Education Detected</p>
               <p style={{ fontSize: '0.85rem', margin: 0 }}>
                 No education details were extracted. Consider adding your educational qualifications.
               </p>
@@ -513,13 +522,13 @@ function Results() {
       )}
 
       {activeTab === 'suggestions' && (
-        <div className="card suggestion-section" style={{ border: '2px solid #fde68a' }}>
+        <div className="card suggestion-section">
           <div className="card-header">
             <h3 className="card-title">
               <span style={{ marginRight: '8px' }}>💡</span>
               Improvement Suggestions ({suggestions.length})
             </h3>
-            <span style={{ fontSize: '0.8rem', color: 'var(--gray-400)' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               Actionable tips to improve your resume
             </span>
           </div>
@@ -527,9 +536,9 @@ function Results() {
             {suggestions.length > 0 ? suggestions.map((s, i) => (
               <SuggestionCard key={i} suggestion={s} />
             )) : (
-              <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--gray-400)' }}>
+              <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
                 <div style={{ fontSize: '3rem', marginBottom: '12px' }}>💡</div>
-                <p style={{ fontWeight: 500, margin: 0 }}>No suggestions available</p>
+                <p style={{ fontWeight: 500, margin: 0, color: 'var(--text-secondary)' }}>No suggestions available</p>
               </div>
             )}
           </div>
@@ -543,7 +552,7 @@ function Results() {
               <span style={{ marginRight: '8px' }}>📁</span>
               Projects {projectsList.length > 0 && `(${projectsList.length})`}
             </h3>
-            <span style={{ fontSize: '0.8rem', color: 'var(--gray-400)' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               Extracted project entries from resume
             </span>
           </div>
@@ -552,31 +561,31 @@ function Results() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {projectsList.map((project, i) => (
                 <div key={i} className="project-card" style={{
-                  padding: '16px',
-                  borderRadius: '8px',
-                  border: '1px solid var(--gray-200)',
-                  background: 'var(--gray-50)',
+                  padding: '20px',
+                  borderRadius: 'var(--radius)',
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--bg-secondary)',
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                    <h4 style={{ margin: 0, color: 'var(--gray-800)', fontSize: '1rem', fontWeight: 600 }}>
+                    <h4 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1rem', fontWeight: 600 }}>
                       {project.title}
                     </h4>
                     {project.dates && (
-                      <span style={{ fontSize: '0.8rem', color: 'var(--gray-400)', whiteSpace: 'nowrap', marginLeft: '12px' }}>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', marginLeft: '12px' }}>
                         📅 {project.dates}
                       </span>
                     )}
                   </div>
 
                   {project.description && (
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-600)', lineHeight: 1.5, margin: '0 0 10px 0' }}>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: '0 0 10px 0' }}>
                       {project.description}
                     </p>
                   )}
 
                   {project.technologies && project.technologies.length > 0 && (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '8px' }}>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--gray-400)', marginRight: '4px', alignSelf: 'center' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginRight: '4px', alignSelf: 'center' }}>
                         🛠️
                       </span>
                       {project.technologies.map((tech, j) => (
@@ -590,9 +599,9 @@ function Results() {
               ))}
             </div>
           ) : (
-            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--gray-400)' }}>
+            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
               <div style={{ fontSize: '3rem', marginBottom: '12px' }}>📁</div>
-              <p style={{ fontWeight: 500, margin: '0 0 6px 0' }}>No Projects Detected</p>
+              <p style={{ fontWeight: 500, margin: '0 0 6px 0', color: 'var(--text-secondary)' }}>No Projects Detected</p>
               <p style={{ fontSize: '0.85rem', margin: 0 }}>
                 A dedicated Projects section was not found in this resume. Adding one can improve your ATS score.
               </p>

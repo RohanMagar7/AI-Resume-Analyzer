@@ -58,7 +58,7 @@ function ResumeList() {
       <div className="page-header">
         <div>
           <h1>Resume List</h1>
-          <p>{resumes.length} resume{resumes.length !== 1 ? 's' : ''} analyzed</p>
+          <p style={{ color: 'var(--text-muted)' }}>{resumes.length} resume{resumes.length !== 1 ? 's' : ''} analyzed</p>
         </div>
         <button className="btn btn-primary" onClick={() => navigate('/upload')}>
           + Upload New
@@ -68,17 +68,29 @@ function ResumeList() {
       {error && <div className="alert alert-error">{error}</div>}
 
       {/* Sort Controls */}
-      <div style={{ marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-        <span style={{ fontSize: '0.85rem', color: 'var(--gray-500)' }}>Sort by:</span>
+      <div style={{
+        marginBottom: '20px',
+        display: 'flex',
+        gap: '12px',
+        alignItems: 'center',
+        background: 'var(--bg-secondary)',
+        padding: '12px 16px',
+        borderRadius: 'var(--radius)',
+        border: '1px solid var(--border-color)',
+      }}>
+        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>Sort by:</span>
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
           style={{
-            padding: '6px 12px',
-            borderRadius: '6px',
-            border: '1px solid var(--gray-200)',
+            padding: '8px 14px',
+            borderRadius: 'var(--radius-sm)',
+            border: '1px solid var(--border-color)',
             fontSize: '0.85rem',
-            background: 'white',
+            background: 'var(--bg-elevated)',
+            color: 'var(--text-primary)',
+            cursor: 'pointer',
+            minWidth: '180px',
           }}
         >
           <option value="-created_at">Newest First</option>
@@ -105,7 +117,7 @@ function ResumeList() {
           </div>
         </div>
       ) : (
-        <div className="card" style={{ padding: 0 }}>
+        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           <div className="table-container">
             <table>
               <thead>
@@ -123,12 +135,12 @@ function ResumeList() {
                 {resumes.map((resume) => (
                   <tr key={resume.id}>
                     <td>
-                      <div style={{ fontWeight: 500 }}>{resume.candidate_name || 'Unknown'}</div>
+                      <div style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{resume.candidate_name || 'Unknown'}</div>
                       {resume.email && (
-                        <div style={{ fontSize: '0.8rem', color: 'var(--gray-400)' }}>{resume.email}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{resume.email}</div>
                       )}
                     </td>
-                    <td style={{ fontSize: '0.85rem', color: 'var(--gray-500)' }}>
+                    <td style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                       {resume.original_filename}
                     </td>
                     <td>
@@ -141,24 +153,24 @@ function ResumeList() {
                         </span>
                       )}
                     </td>
-                    <td>{resume.experience_years || 0} yrs</td>
+                    <td style={{ color: 'var(--text-secondary)' }}>{resume.experience_years || 0} yrs</td>
                     <td>{getScoreTag(resume.ats_score)}</td>
-                    <td style={{ fontSize: '0.85rem', color: 'var(--gray-400)' }}>
+                    <td style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                       {formatDate(resume.created_at)}
                     </td>
                     <td>
-                      <div style={{ display: 'flex', gap: '4px' }}>
+                      <div style={{ display: 'flex', gap: '6px' }}>
                         <button
                           className="btn btn-primary btn-sm"
                           onClick={() => navigate(`/results/${resume.id}`)}
-                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                          style={{ padding: '6px 14px', fontSize: '0.75rem' }}
                         >
                           View
                         </button>
                         <button
                           className="btn btn-danger btn-sm"
                           onClick={() => setShowDelete(resume.id)}
-                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                          style={{ padding: '6px 14px', fontSize: '0.75rem' }}
                         >
                           Delete
                         </button>
@@ -176,8 +188,8 @@ function ResumeList() {
       {showDelete && (
         <div className="modal-backdrop" onClick={() => setShowDelete(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3 style={{ marginBottom: '12px' }}>Delete Resume</h3>
-            <p style={{ color: 'var(--gray-500)', marginBottom: '20px' }}>
+            <h3 style={{ marginBottom: '12px', color: 'var(--text-primary)' }}>Delete Resume</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>
               Are you sure you want to delete this resume analysis?
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>

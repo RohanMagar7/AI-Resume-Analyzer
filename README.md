@@ -1,6 +1,6 @@
 # AI Resume Analyzer
 
-An intelligent resume analysis tool that leverages Natural Language Processing (NLP) and Machine Learning to parse, analyze, and score resumes against industry standards. Built with Django REST Framework and React, it provides detailed ATS (Applicant Tracking System) scoring, skill extraction, job role matching, and actionable improvement suggestions.
+An intelligent resume analysis tool that leverages Natural Language Processing (NLP) and Machine Learning to parse, analyze, and score resumes against industry standards. Built with Django REST Framework and a modern React frontend, it provides detailed ATS (Applicant Tracking System) scoring, skill extraction, job role matching, and actionable improvement suggestions — all wrapped in a clean, responsive, and visually polished UI.
 
 ## 🚀 Features
 
@@ -34,12 +34,20 @@ Comprehensive scoring across six dimensions:
 - **Improvement Suggestions**: Generate actionable recommendations to improve ATS score
 - **Content Distribution Analysis**: Evaluate how well content is distributed across sections
 
-### 📈 Analytics Dashboard
-- **Aggregate Statistics**: View total resumes analyzed, average ATS scores, and experience metrics
-- **Score Distribution**: Track score ranges (Excellent, Good, Average, Poor)
-- **Top Skills**: Identify the most common skills across all analyzed resumes
-- **Role Distribution**: See which job roles resumes are most frequently matched to
-- **Recent Analyses**: Quick access to the most recent resume analyses
+### 🎨 Modern Frontend Design
+- **Clean & Polished UI**: Built with a cohesive design system — consistent typography (Inter font), spacing, and a 10-color palette (primary indigo, success green, warning amber, danger red, plus gray scale)
+- **Responsive Layout**: Fully responsive across desktop, tablet, and mobile — flexible CSS grids (`grid-2`, `grid-3`, `stats-grid`) adapt seamlessly
+- **Interactive Visualizations**: Powered by Recharts — donut charts for ATS score distribution, bar charts for job role matching
+- **Smooth Animations**: Fade-in page transitions on route change, SVG score gauge circle animation with `stroke-dashoffset`, hover lift effects on cards
+- **Tab-based Navigation**: Detailed analysis organized into 5+ intuitive tabs (Overview, Skills, Experience, Education, Projects, Suggestions)
+- **Drag & Drop Upload**: Modern upload UX with drag-and-drop zone, visual feedback (`drag-over` state), file type/size validation, and a target role text input
+- **Modal Dialogs**: Confirmation modals for delete actions with semi-transparent backdrop, centered positioning, and click-outside-to-close
+- **Score Visualization System**: Circular gauge for overall ATS score (color-coded: green≥80, indigo≥60, amber≥40, red<40), animated horizontal bars for sub-scores
+- **Tag-based UI Elements**: Color-coded tags for skills (primary), scores (success/warning/danger), and categories — consistent pill-shaped badges
+- **Empty States**: Every tab and list has a contextual empty state with icon, message, and CTA button
+- **Suggestion Cards**: Priority-colored cards (red=high, amber=medium, green=low) with left-border accent, icon, and recommendation text
+- **Micro-interactions**: Hover highlight on table rows, stat cards that lift + shadow on hover, project cards with translateY hover effect
+- **Sticky Navigation**: Fixed top navbar with backdrop blur, active route highlighting, and responsive brand name hiding on mobile
 
 ## 🏗️ Architecture
 
@@ -65,11 +73,11 @@ AI Resume Analyzer/
 ├── frontend/                         # React + Vite frontend
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Dashboard.jsx         # Analytics dashboard
-│   │   │   ├── Navbar.jsx            # Navigation bar
-│   │   │   ├── Results.jsx           # Detailed analysis results
-│   │   │   ├── ResumeList.jsx        # Resume history list
-│   │   │   └── Upload.jsx            # File upload with drag & drop
+│   │   │   ├── Dashboard.jsx         # Analytics dashboard with Recharts visualizations
+│   │   │   ├── Navbar.jsx            # Sticky navbar with backdrop blur & active route highlighting
+│   │   │   ├── Results.jsx           # Detailed analysis with tab navigation & score gauges
+│   │   │   ├── ResumeList.jsx        # Sortable/paginated table with modal delete confirmation
+│   │   │   └── Upload.jsx            # Drag & drop file upload with validation
 │   │   ├── App.jsx                   # Root React app component
 │   │   ├── api.js                    # Axios API client
 │   │   ├── index.css                 # Global styles
